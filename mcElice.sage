@@ -5,7 +5,8 @@
 
 ##.... configuration ....##
 
-N = 40  # "length" -- the length of the code
+
+N = 41  # "length" -- the length of the code
 K = 12
 CODE = "bch"
 MENS = x^10
@@ -50,7 +51,7 @@ def genP(n):
          code
 """
 def Reed_solomon(n,k):
-    return codes.GeneralizedReedSolomonCode(GF(2).list()[:n], k)
+    return codes.GeneralizedReedSolomonCode(GF(59).list()[:n], k)
 """
 ## BCH CODE ##
 
@@ -62,7 +63,7 @@ def Reed_solomon(n,k):
          code
 """
 def BCH(n,k):
-    return codes.BCHCode(GF(2), n, k, offset=1)
+    return codes.BCHCode(GF(2), n, k)
 
 """
 ## GOPPA CODE ##
@@ -108,16 +109,19 @@ def Hamming(n,k):
        * "private key " -- (S,G,P)
 """
 def geneKey(n,k,code="bch"):
+    """
     C = {
         "red_solomon" : Reed_solomon(n,k),
         "bch" : BCH(n,k),
         "goppa" : Goppa(n,k),
         "hamming" : Hamming(n,k)
         }[code]
-    t =  (C.minimum_distance() - 1) // 2 
-    S = genS(k)
-    P = genP(n)
-    G = C.generator_matrix().transpose()
+    """
+    C  = BCH(n,k)
+    t  = (C.minimum_distance() - 1) // 2 
+    S  = genS(k)
+    P  = genP(n)
+    G  = C.generator_matrix().transpose()
     G_ = S*G*P
     return [C,(G_,t),(S,G,P)]
     
@@ -135,6 +139,7 @@ def geneKey(n,k,code="bch"):
 """
 
 def genZ(n,t):
+    
     return None
 
 """
@@ -183,9 +188,6 @@ def decryption(C, privKey, mens):
     c_ = mens*P
     m = C.encoder("EvaluationPolynomial").encode(c_)
     return m*S.inverse()
-
-
-    
 
 
 def main():
