@@ -6,10 +6,10 @@
 ##.... configuration ....##
 
 
-N = 41  # "length" -- the length of the code
-K = 12
+N = 31  # "length" -- the length of the code
+K = 10
 CODE = "bch"
-MENS = x^10
+MENS = matrix([[1,0,1,0,1,0,0,1,0,1,1]])
 
 #.........................#
 
@@ -119,10 +119,12 @@ def geneKey(n,k,code="bch"):
     """
     C  = BCH(n,k)
     t  = (C.minimum_distance() - 1) // 2 
+    k  = C.dimension()
     S  = genS(k)
     P  = genP(n)
-    G  = C.generator_matrix().transpose()
+    G  = C.generator_matrix()
     G_ = S*G*P
+    print(G_)
     return [C,(G_,t),(S,G,P)]
     
 
@@ -139,8 +141,12 @@ def geneKey(n,k,code="bch"):
 """
 
 def genZ(n,t):
-    
-    return None
+    z = [1 for _ in range(t)]
+    l = t
+    while l < n:
+        z.insert(randint(0,l), 0)
+        l += 1
+    return matrix([z])
 
 """
 ## MESSAGE ENCRYPTION ##
@@ -160,9 +166,9 @@ def genZ(n,t):
 """
 def encryption(C, pubKey, mens):
     G_ , t = pubKey
-    m = C.encoder("EvaluationPolynomial").encode(mens)
+    m = mens
     c_ = m*G_
-    z = genZ(n,t)
+    z = genZ(31,t)
     return c_ + z
     
 
@@ -186,7 +192,9 @@ def decryption(C, privKey, mens):
     S,G,P = privKey
     P_ = P.inverse()
     c_ = mens*P
-    m = C.encoder("EvaluationPolynomial").encode(c_)
+    print('c_', c_)
+    m = C.decode_to_message(vector(c_))
+    print('m', m)
     return m*S.inverse()
 
 
