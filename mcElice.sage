@@ -119,6 +119,7 @@ def geneKey(n,k,code="bch"):
     """
     C  = BCH(n,k)
     t  = (C.minimum_distance() - 1) // 2 
+    print('t', t)
     k  = C.dimension()
     S  = genS(k)
     P  = genP(n)
@@ -141,10 +142,10 @@ def geneKey(n,k,code="bch"):
 """
 
 def genZ(n,t):
-    z = [1 for _ in range(t)]
-    l = t
+    z = [0 for _ in range(n-t)]
+    l = n-t
     while l < n:
-        z.insert(randint(0,l), 0)
+        z.insert(randint(0,l), 1)
         l += 1
     return matrix([z])
 
@@ -166,9 +167,11 @@ def genZ(n,t):
 """
 def encryption(C, pubKey, mens):
     G_ , t = pubKey
+    print('t', t)
     m = mens
     c_ = m*G_
     z = genZ(31,t)
+    print('z_', z)
     return c_ + z
     
 
@@ -191,9 +194,10 @@ def encryption(C, pubKey, mens):
 def decryption(C, privKey, mens):
     S,G,P = privKey
     P_ = P.inverse()
-    c_ = mens*P
+    c_ = mens*P_
     print('c_', c_)
-    m = C.decode_to_message(vector(c_))
+    print('M_', matrix(C.encode(vector(MENS))))
+    m = C.decode_to_message(vector(c_[0]))
     print('m', m)
     return m*S.inverse()
 
