@@ -9,8 +9,9 @@
 N = 31  # "length" -- the length of the code
 K = 10
 CODE = "bch"
-MENS = matrix([[1,0,1,0,1,0,0,1,0,1,1]])
-
+#MENS = matrix([[1,0,1,0,1,0,0,1,0,1,1]])
+MENS = matrix([[1,0,1,0,1,0,0,1,0,1]])
+#MENS = matrix([[0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0],[0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0],[0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],[1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0],[1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1 ,0 ,1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1],[1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0],[0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0],[1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],[0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1],[0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0]]).transpose()
 #.........................#
 
 
@@ -63,7 +64,7 @@ def Reed_solomon(n,k):
          code
 """
 def BCH(n,k):
-    return codes.BCHCode(GF(2), n, k)
+    return codes.BCHCode(n, k,GF(2))
 
 """
 ## GOPPA CODE ##
@@ -169,6 +170,8 @@ def encryption(C, pubKey, mens):
     G_ , t = pubKey
     print('t', t)
     m = mens
+    print(m)
+    print(G_)
     c_ = m*G_
     z = genZ(31,t)
     print('z_', z)
@@ -196,9 +199,13 @@ def decryption(C, privKey, mens):
     P_ = P.inverse()
     c_ = mens*P_
     print('c_', c_)
-    print('M_', matrix(C.encode(vector(MENS))))
-    m = C.decode_to_message(vector(c_[0]))
+#print('M_', matrix(C.encode(vector(mens))))
+#print('M_', C.encode(c_))
+    print("vector c_ 0 ->",vector(c_[0]))
+#m = C.decode_to_message(GF(2),vector(c_[0]))
+    m = C.decode_to_message(GF(2),vector((1,1,0,1,1,0,1,0,1,1)))
     print('m', m)
+    print("chegou")
     return m*S.inverse()
 
 
