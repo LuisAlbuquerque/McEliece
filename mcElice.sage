@@ -39,6 +39,8 @@ def genP(n):
         rand = randint(0,len(not_used)-1 )
         M.set_block(i,not_used[rand],one)
         not_used.remove(not_used[rand])
+    print(M)
+    print
     return M
 
 """
@@ -120,13 +122,17 @@ def geneKey(n,k,code="bch"):
     """
     C  = BCH(n,k)
     t  = (C.minimum_distance() - 1) // 2 
-    print('t', t)
+    t -= 1
     k  = C.dimension()
     S  = genS(k)
     P  = genP(n)
     G  = C.generator_matrix()
     G_ = S*G*P
-    print(G_)
+    print('G_', G_)
+    print('t', t)
+    print('S ', S)
+    print('G ', G)
+    print('P ', P)
     return [C,(G_,t),(S,G,P)]
     
 
@@ -168,13 +174,10 @@ def genZ(n,t):
 """
 def encryption(C, pubKey, mens):
     G_ , t = pubKey
-    print('t', t)
     m = mens
-    print(m)
-    print(G_)
     c_ = m*G_
-    z = genZ(31,t)
-    print('z_', z)
+    z = genZ(N,t)
+    print('z ', z)
     return c_ + z
     
 
@@ -199,13 +202,11 @@ def decryption(C, privKey, mens):
     P_ = P.inverse()
     c_ = mens*P_
     print('c_', c_)
-#print('M_', matrix(C.encode(vector(mens))))
-#print('M_', C.encode(c_))
-    print("vector c_ 0 ->",vector(c_[0]))
-#m = C.decode_to_message(GF(2),vector(c_[0]))
-    m = C.decode_to_message(GF(2),vector((1,1,0,1,1,0,1,0,1,1)))
+#print('M ', matrix(C.encode(vector(mens))))
+#print('M ', C.encode(c_))
+    m = C.decode_to_message(vector(c_[0]))
+    #m = C.decode_to_message(GF(2),vector((1,1,0,1,1,0,1,0,1,1)))
     print('m', m)
-    print("chegou")
     return m*S.inverse()
 
 
